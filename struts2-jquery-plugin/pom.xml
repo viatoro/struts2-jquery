@@ -34,6 +34,37 @@
         </resources>
         <plugins>
             <plugin>
+            	<groupId>net.alchim31.maven</groupId>
+            	<artifactId>yuicompressor-maven-plugin</artifactId>
+            	<version>1.1</version>
+            	<executions>
+		          <execution>
+		            <goals>
+		              <goal>compress</goal>
+		            </goals>
+		          </execution>
+		        </executions>     
+		        <configuration>
+		        <suffix>.min</suffix>
+		        </configuration>   
+<!-- 		        <configuration> -->
+<!-- 		          <nosuffix>true</nosuffix> -->
+<!-- 		          <aggregations> -->
+<!-- 		           <aggregation> -->
+<!-- 		              remove files after aggregation (default: false) -->
+<!-- 		              <removeIncluded>true</removeIncluded> -->
+<!-- 		              insert new line after each concatenation (default: false) -->
+<!-- 		              <insertNewLine>true</insertNewLine> -->
+<!-- 		              <output>${project.build.directory}/${project.build.finalName}/static/all-2.js</output> -->
+<!-- 		              files to include, path relative to output's directory -->
+<!-- 		              <includes> -->
+<!-- 		                <include>toAggregateAndRemove/**.js</include> -->
+<!-- 		              </includes> -->
+<!-- 		            </aggregation> -->
+<!-- 		          </aggregations> -->
+<!-- 		        </configuration> -->
+            </plugin>
+            <plugin>
                 <groupId>org.apache.myfaces.tobago</groupId>
                 <artifactId>maven-apt-plugin</artifactId>
                 <version>1.0.39</version>
@@ -57,8 +88,11 @@
                         org.apache.struts.annotations.taglib.apt.TLDAnnotationProcessorFactory
                     </factory>
                     <target>1.5</target>
+                    
                     <includes>
+                    
                         <include>**/*.java</include>
+<!--                         <include>**/*.java,**/*.js,**/*.css</include> -->
                     </includes>
                 </configuration>
                 <executions>
@@ -70,6 +104,7 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 
