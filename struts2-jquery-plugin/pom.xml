@@ -109,4 +109,7 @@
         </dependency>
     </dependencies>
 
+    <properties>
+    	<struts2.version>2.3.16.3</struts2.version>
+    </properties>
 </project>
