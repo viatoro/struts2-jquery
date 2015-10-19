@@ -85,6 +85,9 @@ jQuery(document).ready(function () {
 	<#if parameters.listLabel??>
 	options_${escapedOptionId?html}.listlabel = "${parameters.listLabel?html}";
 	</#if>
+	<#if parameters.listLabel??>
+	options_${escapedOptionId?html}.css = "${parameters.cssClass?html}";
+	</#if>
   </#if>
 
   <#include "/${parameters.templateDir}/jquery/base.ftl" />
