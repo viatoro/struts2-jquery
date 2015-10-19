@@ -1,5 +1,5 @@
 /*!
- * jQuery UI Datepicker 1.10.4
+ * jQuery UI Datepicker 1.10.4 - customize
  * http://jqueryui.com
  *
  * Copyright 2014 jQuery Foundation and other contributors
@@ -55,7 +55,8 @@
             firstDay: 0, // The first day of the week, Sun = 0, Mon = 1, ...
             isRTL: false, // True if right-to-left language, false if left-to-right
             showMonthAfterYear: false, // True if the year select precedes month, false for month then year
-            yearSuffix: "" // Additional text to append to the year in the month headers
+            yearSuffix: "", // Additional text to append to the year in the month headers
+            isBuddhist: false
         };
         this._defaults = { // Global defaults for all the date picker instances
             showOn: "focus", // "focus" for popup on focus,
@@ -681,7 +682,7 @@
                 try {
                     date = $.datepicker.parseDate($.datepicker._get(inst, "dateFormat"),
                         (inst.input ? inst.input.val() : null),
-                        $.datepicker._getFormatConfig(inst));
+                        $.datepicker._getFormatConfig(inst),$.datepicker._yearOffset(inst));
 
                     if (date) { // only if valid
                         $.datepicker._setDateFromField(inst);
@@ -1041,7 +1042,7 @@
             if (altField) { // update alternate field too
                 altFormat = this._get(inst, "altFormat") || this._get(inst, "dateFormat");
                 date = this._getDate(inst);
-                dateStr = this.formatDate(altFormat, date, this._getFormatConfig(inst));
+                dateStr = this.formatDate(altFormat, date, this._getFormatConfig(inst),this._yearOffset(inst));
                 $(altField).each(function () {
                     $(this).val(dateStr);
                 });
@@ -1087,7 +1088,7 @@
          *					monthNames		string[12] - names of the months (optional)
          * @return  Date - the extracted date value or null if value is blank
          */
-        parseDate: function (format, value, settings) {
+        parseDate: function (format, value, settings,yearOffset) {
             if (format == null || value == null) {
                 throw "Invalid arguments";
             }
@@ -1231,7 +1232,7 @@
                 year += new Date().getFullYear() - new Date().getFullYear() % 100 +
                     (year <= shortYearCutoff ? 0 : -100);
             }
-
+            year-=yearOffset;
             if (doy > -1) {
                 month = 1;
                 day = doy;
@@ -1297,7 +1298,7 @@
          *					monthNames		string[12] - names of the months (optional)
          * @return  string - the date in the above format
          */
-        formatDate: function (format, date, settings) {
+        formatDate: function (format, date, settings,z) {
             if (!date) {
                 return "";
             }
@@ -1359,7 +1360,7 @@
                                 output += formatName("M", date.getMonth(), monthNamesShort, monthNames);
                                 break;
                             case "y":
-                                output += (lookAhead("y") ? date.getFullYear() :
+                                output += (lookAhead("y") ? date.getFullYear()+z :
                                     (date.getYear() % 100 < 10 ? "0" : "") + date.getYear() % 100);
                                 break;
                             case "@":
@@ -1450,7 +1451,7 @@
                 settings = this._getFormatConfig(inst);
 
             try {
-                date = this.parseDate(dateFormat, dates, settings) || defaultDate;
+                date = this.parseDate(dateFormat, dates, settings , this._yearOffset(inst)) || defaultDate;
             } catch (event) {
                 dates = (noDefault ? "" : dates);
             }
@@ -1479,7 +1480,7 @@
                 offsetString = function (offset) {
                     try {
                         return $.datepicker.parseDate($.datepicker._get(inst, "dateFormat"),
-                            offset, $.datepicker._getFormatConfig(inst));
+                            offset, $.datepicker._getFormatConfig(inst),$.datepicker._yearOffset(inst));
                     }
                     catch (e) {
                         // Ignore
@@ -1658,7 +1659,7 @@
             prevText = this._get(inst, "prevText");
             prevText = (!navigationAsDateFormat ? prevText : this.formatDate(prevText,
                 this._daylightSavingAdjust(new Date(drawYear, drawMonth - stepMonths, 1)),
-                this._getFormatConfig(inst)));
+                this._getFormatConfig(inst),this._yearOffset(inst)));
 
             prev = (this._canAdjustMonth(inst, -1, drawYear, drawMonth) ?
                 "<a class='ui-datepicker-prev ui-corner-all' data-handler='prev' data-event='click'" +
@@ -1668,7 +1669,7 @@
             nextText = this._get(inst, "nextText");
             nextText = (!navigationAsDateFormat ? nextText : this.formatDate(nextText,
                 this._daylightSavingAdjust(new Date(drawYear, drawMonth + stepMonths, 1)),
-                this._getFormatConfig(inst)));
+                this._getFormatConfig(inst),this._yearOffset(inst)));
 
             next = (this._canAdjustMonth(inst, +1, drawYear, drawMonth) ?
                 "<a class='ui-datepicker-next ui-corner-all' data-handler='next' data-event='click'" +
@@ -1678,7 +1679,7 @@
             currentText = this._get(inst, "currentText");
             gotoDate = (this._get(inst, "gotoCurrent") && inst.currentDay ? currentDate : today);
             currentText = (!navigationAsDateFormat ? currentText :
-                this.formatDate(currentText, gotoDate, this._getFormatConfig(inst)));
+                this.formatDate(currentText, gotoDate, this._getFormatConfig(inst),this._yearOffset(inst)));
 
             controls = (!inst.inline ? "<button type='button' class='ui-datepicker-close ui-state-default ui-priority-primary ui-corner-all' data-handler='hide' data-event='click'>" +
                 this._get(inst, "closeText") + "</button>" : "");
@@ -1836,7 +1837,7 @@
             if (!inst.yearshtml) {
                 inst.yearshtml = "";
                 if (secondary || !changeYear) {
-                    html += "<span class='ui-datepicker-year'>" + drawYear + "</span>";
+                    html += "<span class='ui-datepicker-year'>" + (drawYear+this._yearOffset(inst)) + "</span>";
                 } else {
                     // determine range of years to display
                     years = this._get(inst, "yearRange").split(":");
@@ -1855,7 +1856,7 @@
                     for (; year <= endYear; year++) {
                         inst.yearshtml += "<option value='" + year + "'" +
                             (year === drawYear ? " selected='selected'" : "") +
-                            ">" + year + "</option>";
+                            ">" + (year+this._yearOffset(inst)) + "</option>";
                     }
                     inst.yearshtml += "</select>";
 
@@ -1984,7 +1985,13 @@
             var date = (day ? (typeof day === "object" ? day :
                 this._daylightSavingAdjust(new Date(year, month, day))) :
                 this._daylightSavingAdjust(new Date(inst.currentYear, inst.currentMonth, inst.currentDay)));
-            return this.formatDate(this._get(inst, "dateFormat"), date, this._getFormatConfig(inst));
+            return this.formatDate(this._get(inst, "dateFormat"), date, this._getFormatConfig(inst),this._yearOffset(inst));
+        },
+        
+        _yearOffset: function (inst) { 
+        	if (this._get(inst, "isBuddhist")) 
+        		return 543;
+        	return 0 
         }
     });
 

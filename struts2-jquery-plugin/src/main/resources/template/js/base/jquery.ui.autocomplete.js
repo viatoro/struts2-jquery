@@ -8,6 +8,7 @@
  *
  * http://api.jqueryui.com/autocomplete/
  *
+ *custom By Kwan
  * Depends:
  *	jquery.ui.core.js
  *	jquery.ui.widget.js
@@ -412,7 +413,9 @@
             this.element.addClass("ui-autocomplete-loading");
             this.cancelSearch = false;
 
-            this.source({ term: value }, this._response());
+    		var out ={request:{ term: value }} ;//20140521 add function custom data send by Kwan 
+    		this._trigger( "request", null, out );//20140521 add function custom data send by Kwan 
+    		this.source( out.request, this._response() );//20140521 add function custom data send by Kwan 
         },
 
         _response: function () {

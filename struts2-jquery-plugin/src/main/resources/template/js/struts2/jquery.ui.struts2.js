@@ -1,5 +1,5 @@
 /*!
- * jquery.ui.struts2.js
+ * jquery.ui.struts2.js-custom
  *
  * Integration of jquery and jquery ui with struts 2
  * for ajax, widget and interactions support in struts 2
@@ -13,6 +13,9 @@
  *   http://www.opensource.org/licenses/mit-license.php
  *   http://www.gnu.org/licenses/gpl.html
  *
+ *
+ *
+ *	###custom by Kwan###
  */
 
 /*global jQuery, document, window, StrutsUtils  */
@@ -544,15 +547,15 @@
                 else {
                     $elem.datetimepicker(params);
                 }
-                if (o.year !== undefined) {
-                    $elem.datetimepicker('setDate', new Date(o.year, o.month, o.day, o.hour, o.minute, o.second));
-                }
+//                if (o.year !== undefined) {
+//                    $elem.datetimepicker('setDate', new Date(o.year, o.month, o.day, o.hour, o.minute, o.second));
+//                }
             }
             else {
                 $elem.datepicker(params);
-                if (o.year !== undefined) {
-                    $elem.val($.datepicker.formatDate(params.dateFormat, new Date(o.year, o.month, o.day)));
-                }
+//                if (o.year !== undefined) {
+//                    $elem.val($.datepicker.formatDate(params.dateFormat, new Date(o.year, o.month, o.day)));
+//                }
             }
 
             if (o.zindex) {
@@ -844,10 +847,34 @@
                             }
                         });
                     };
+                } else {
+                    
+                    //############## 20140521 add function custom data send by Kwan #######################
+                    if(o.requesttype){
+                    	params.source = function(request, response) {
+//                    		console.log(request);
+//                    		console.log(response);
+                            $.ajax({
+                                url: self.addForms(o.formids, url),
+                                data: request,
+                                dataType: "json",
+                                type: o.requesttype,
+                                success: function(data){
+                                    response(data);
+                                }
+                              });
+                            }
+                    	
+                    	//params.type = o.requesttype;
+                    }
+                    
+                    //############### 20140521 add function custom data send by Kwan ##########################
+                    else{
+                    	params.source = self.addForms(o.formids, url);	
+                    }
+                    
                 }
-                else {
-                    params.source = self.addForms(o.formids, url);
-                }
+                
             }
             else if (o.list && o.selectBox === false) {
                 params.source = o.list;
