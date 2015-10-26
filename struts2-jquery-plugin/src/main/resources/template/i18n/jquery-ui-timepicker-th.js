@@ -11,7 +11,7 @@
 		timezoneText: 'เขตเวลา',
 		currentText: 'เวลาปัจจุบัน',
 		closeText: 'ปิด',
-		timeFormat: 'hh:mm tt'
+		timeFormat: 'hh:mm'
 	};
 	$.timepicker.setDefaults($.timepicker.regional['th']);
 })(jQuery);
